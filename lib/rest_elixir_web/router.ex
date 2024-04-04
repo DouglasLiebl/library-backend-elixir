@@ -18,6 +18,12 @@ defmodule RestElixirWeb.Router do
     get "/:email", UserController, :show
   end
 
+  scope "/api", RestElixirWeb do
+    pipe_through :api
+
+    post "/login", UserController, :login
+  end
+
   # Enable LiveDashboard in development
   if Application.compile_env(:rest_elixir, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put

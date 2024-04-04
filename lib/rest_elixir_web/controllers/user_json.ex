@@ -16,4 +16,11 @@ defmodule RestElixirWeb.UserJSON do
       updated_at: user.updated_at
     }
   end
+
+  def logged(%{user: user, token: token}) do
+    %{
+      data: data(user),
+      access_token: token
+    }
+  end
 end
