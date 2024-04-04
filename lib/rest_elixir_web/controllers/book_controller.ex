@@ -1,7 +1,7 @@
 defmodule RestElixirWeb.BookController do
   use RestElixirWeb, :controller
 
-  alias RestElixirWeb.BookJSON
+  alias RestElixirWeb.FallbackJSON
   alias RestElixir.Models.Entities.Book
   alias RestElixir.Models.Repositories.BookRepo
 
@@ -19,7 +19,7 @@ defmodule RestElixirWeb.BookController do
       {:error, %Ecto.Changeset{} = changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> json(BookJSON.show_error(changeset))
+        |> json(FallbackJSON.show_error(changeset))
     end
   end
 
@@ -35,7 +35,7 @@ defmodule RestElixirWeb.BookController do
       {:error, %Ecto.Changeset{} = changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> json(BookJSON.show_error(changeset))
+        |> json(FallbackJSON.show_error(changeset))
     end
   end
 
@@ -44,7 +44,7 @@ defmodule RestElixirWeb.BookController do
       nil ->
         conn
         |> put_status(:not_found)
-        |> json(BookJSON.not_found(id))
+        |> json(FallbackJSON.not_found(id))
       %Book{} = book ->
         with {:ok, %Book{}} <- BookRepo.delete_book(book) do
           conn
