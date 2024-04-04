@@ -5,8 +5,10 @@ defmodule RestElixirWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", RestElixirWeb do
+  scope "/api/books", RestElixirWeb do
     pipe_through :api
+
+    resources "/", BookController
   end
 
   # Enable LiveDashboard in development
