@@ -21,13 +21,36 @@ defmodule RestElixirWeb.BookController do
         |> put_status(:unprocessable_entity)
         |> json(BookJSON.show_error(changeset))
     end
-
-
   end
 
   def show(conn, %{"id" => id}) do
     conn
-    |> render(:show, book: BookRepo.get_book!(id))
+    |> render(:show, book: BookRepo.get_book(id))
+  end
+
+  def update(conn, %{"id" => id, "book" => book_params}) do
+    with {:ok, %Book{} = book} <- BookRepo.update_book(BookRepo.get_book(id), book_params) do
+      render(conn, :show, book: book)
+    else
+      {:error, %Ecto.Changeset{} = changeset} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(BookJSON.show_error(changeset))
+    end
+  end
+
+  def delete(conn, %{"id" => id}) do
+    case BookRepo.get_book(id) do
+      nil ->
+        conn
+        |> put_status(:not_found)
+        |> json(BookJSON.not_found(id))
+      %Book{} = book ->
+        with {:ok, %Book{}} <- BookRepo.delete_book(book) do
+          conn
+          |> send_resp(:no_content, "")
+        end
+    end
   end
 
 end

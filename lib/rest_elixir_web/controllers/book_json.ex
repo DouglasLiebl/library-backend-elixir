@@ -33,19 +33,20 @@ defmodule RestElixirWeb.BookJSON do
 
     No final, a variável `errors` contém um mapa onde cada chave é um campo que tem um erro e cada valor é uma string que contém a mensagem de erro formatada para esse campo.
   """
-  @spec show_error(Ecto.Changeset.t()) :: map
   def show_error(%Ecto.Changeset{} = changeset) do
-    errors = Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
-      IO.inspect(changeset)
-      Enum.reduce(opts, msg, fn {key, value}, acc ->
-        String.replace(acc, "%{#{key}}", to_string(value))
-      end)
-    end)
-
-    errors
+    Ecto.Changeset.traverse_errors(changeset, &translate_error/1)
     |> Enum.map(fn {field, messages} -> {field, Enum.join(messages, ", ")} end)
     |> Enum.into(%{})
   end
 
-  def show_error(_), do: %{errors: "Invalid argument"}
+  defp translate_error({msg, opts}) do
+    Enum.reduce(opts, msg, fn {key, value}, acc ->
+      String.replace(acc, "%{#{key}}", fn _ -> to_string(value) end)
+    end)
+  end
+
+  def not_found(id) do
+    %{not_found: "Book #{id} not found"}
+  end
+
 end

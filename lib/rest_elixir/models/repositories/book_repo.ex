@@ -14,5 +14,19 @@ defmodule RestElixir.Models.Repositories.BookRepo do
     |> Repo.insert()
   end
 
-  def get_book!(id), do: Repo.get!(Book, id)
+  def get_book(id), do: Repo.get(Book, id)
+
+  def delete_book(%Book{} = book) do
+    Repo.delete(book)
+  end
+
+  def update_book(%Book{} = book, attrs) do
+    book
+    |> Book.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def change_book(%Book{} = book, attrs \\ %{}) do
+    Book.changeset(book, attrs)
+  end
 end
