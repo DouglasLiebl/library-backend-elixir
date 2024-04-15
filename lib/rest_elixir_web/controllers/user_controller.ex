@@ -1,12 +1,15 @@
 defmodule RestElixirWeb.UserController do
   use RestElixirWeb, :controller
 
-  alias RestElixir.Guardian
+  alias RestElixirWeb.Auth.Guardian
   alias RestElixirWeb.FallbackJSON
   alias RestElixir.Models.Entities.User
   alias RestElixir.Models.Repositories.UserRepo
 
   def show(conn, %{"email" => email}) do
+    [auth_header | _] = Plug.Conn.get_req_header(conn, "authorization")
+    get_resource_from_token(auth_header)
+
     conn
     |> render(:show, user: UserRepo.get_user_by_email(email))
   end
@@ -31,6 +34,16 @@ defmodule RestElixirWeb.UserController do
         conn
         |> put_status(:ok)
         |> render(:logged, %{user: user, token: token})
+    end
+  end
+
+  def get_resource_from_token(token) do
+    case Guardian.decode_and_verify(token) do
+      {:ok, claims} ->
+        RestElixirWeb.Auth.Guardian.resource_from_claims(claims)
+
+      {:error, reason} ->
+        IO.inspect(reason, label: "error")
     end
   end
 end

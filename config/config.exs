@@ -31,7 +31,7 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 # Guardian config
-config :rest_elixir, RestElixir.Guardian,
+config :rest_elixir, RestElixirWeb.Auth.Guardian,
     issuer: "rest_elixir",
     secret_key: "fLBRF50JGxHnk4xuit8aPXC3TiwXyIKkKI8GCWP2ztViZpGQKbU8SV7xxPjR6M0q"
 

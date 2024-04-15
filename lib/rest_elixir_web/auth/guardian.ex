@@ -1,7 +1,9 @@
-defmodule RestElixir.Guardian do
-
+defmodule RestElixirWeb.Auth.Guardian do
   use Guardian, otp_app: :rest_elixir
 
+  alias RestElixir.Models.Repositories.UserRepo
+
+  @spec subject_for_token(any(), any()) :: {:error, :no_email_provided} | {:ok, binary()}
   def subject_for_token(%{email: email}, _claims) do
     {:ok, to_string(email)}
   end
@@ -11,7 +13,7 @@ defmodule RestElixir.Guardian do
   end
 
   def resource_from_claims(%{"sub" => email}) do
-    case RestElixir.Models.Repositories.UserRepo.get_user_by_email(email) do
+    case UserRepo.get_user_by_email(email) do
       nil -> {:error, :not_found}
       resource -> {:ok, resource}
     end
@@ -22,7 +24,7 @@ defmodule RestElixir.Guardian do
   end
 
   def authenticate(email, password) do
-    case RestElixir.Models.Repositories.UserRepo.get_user_by_email(email) do
+    case UserRepo.get_user_by_email(email) do
       nil -> {:error, :unauthored}
       user ->
         case validate_password(password, user.hash_password) do
@@ -38,7 +40,7 @@ defmodule RestElixir.Guardian do
   end
 
   defp create_token(user) do
-    {:ok, token, _claims} = encode_and_sign(user)
+    {:ok, token, _claims} = encode_and_sign(user, %{role: "USER"})
     {:ok, user, token}
   end
 end
