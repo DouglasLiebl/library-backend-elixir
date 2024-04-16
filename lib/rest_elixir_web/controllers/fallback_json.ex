@@ -13,10 +13,8 @@ defmodule RestElixirWeb.FallbackJSON do
 
     No final, a variável `errors` contém um mapa onde cada chave é um campo que tem um erro e cada valor é uma string que contém a mensagem de erro formatada para esse campo.
   """
-  def show_error(%Ecto.Changeset{} = changeset) do
-    Ecto.Changeset.traverse_errors(changeset, &translate_error/1)
-    |> Enum.map(fn {field, messages} -> {field, Enum.join(messages, ", ")} end)
-    |> Enum.into(%{})
+  def unprocessable_entity(%{changeset: changeset}) do
+    %{errors: Ecto.Changeset.traverse_errors(changeset, &translate_error/1)}
   end
 
   defp translate_error({msg, opts}) do
@@ -25,8 +23,8 @@ defmodule RestElixirWeb.FallbackJSON do
     end)
   end
 
-  def not_found(id) do
-    %{not_found: "Book #{id} not found"}
+  def not_found(_) do
+    %{errors: "NotFound"}
   end
 
 end

@@ -10,6 +10,6 @@ defmodule RestElixir.Models.Repositories.UserRepo do
     |> Repo.insert()
   end
 
-  def get_user_by_email(email), do: Repo.get_by(User, email: email)
+  def get_user_by_email!(email), do: Repo.get_by!(User, email: email)
 
 end

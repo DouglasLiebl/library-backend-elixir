@@ -17,7 +17,7 @@ defmodule RestElixirWeb.Router do
   end
 
   scope "/api/users", RestElixirWeb do
-    pipe_through [:api, :super_user]
+    pipe_through [:api]
 
     post "/", UserController, :create
     get "/:email", UserController, :show

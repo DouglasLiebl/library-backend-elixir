@@ -2,16 +2,18 @@ defmodule RestElixirWeb.UserController do
   use RestElixirWeb, :controller
 
   alias RestElixirWeb.Auth.Guardian
-  alias RestElixirWeb.FallbackJSON
   alias RestElixir.Models.Entities.User
   alias RestElixir.Models.Repositories.UserRepo
 
-  def show(conn, %{"email" => email}) do
-    [auth_header | _] = Plug.Conn.get_req_header(conn, "authorization")
-    get_resource_from_token(auth_header)
+  action_fallback RestElixirWeb.FallbackController
 
-    conn
-    |> render(:show, user: UserRepo.get_user_by_email(email))
+  def show(conn, %{"email" => email}) do
+    try do
+      conn
+      |> render(:show, user: UserRepo.get_user_by_email!(email))
+    rescue
+      _e in Ecto.NoResultsError -> {:error, :not_found}
+    end
   end
 
   def create(conn, %{"user" => user_params}) do
@@ -20,11 +22,6 @@ defmodule RestElixirWeb.UserController do
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/users/#{user.email}")
       |> render(:show, user: user)
-    else
-      {:error, %Ecto.Changeset{} = changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> json(FallbackJSON.show_error(changeset))
     end
   end
 
@@ -37,7 +34,8 @@ defmodule RestElixirWeb.UserController do
     end
   end
 
-  def get_resource_from_token(token) do
+  def get_resource_from_token(conn) do
+    [token | _] = Plug.Conn.get_req_header(conn, "authorization")
     case Guardian.decode_and_verify(token) do
       {:ok, claims} ->
         RestElixirWeb.Auth.Guardian.resource_from_claims(claims)
