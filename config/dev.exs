@@ -5,7 +5,7 @@ config :rest_elixir, RestElixir.Repo,
   username: "postgres",
   password: "root",
   hostname: "localhost",
-  database: "elixir",
+  database: "postgres",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
