@@ -13,7 +13,7 @@ defmodule RestElixirWeb.Auth.Guardian do
   end
 
   def resource_from_claims(%{"sub" => email}) do
-    case UserRepo.get_user_by_email(email) do
+    case UserRepo.get_user_by_email!(email) do
       nil -> {:error, :not_found}
       resource -> {:ok, resource}
     end
@@ -24,7 +24,7 @@ defmodule RestElixirWeb.Auth.Guardian do
   end
 
   def authenticate(email, password) do
-    case UserRepo.get_user_by_email(email) do
+    case UserRepo.get_user_by_email!(email) do
       nil -> {:error, :unauthored}
       user ->
         case validate_password(password, user.hash_password) do

@@ -14,7 +14,7 @@ defmodule RestElixir.Models.Repositories.BookRepo do
     |> Repo.insert()
   end
 
-  def get_book(id), do: Repo.get(Book, id)
+  def get_book!(id), do: Repo.get!(Book, id)
 
   def delete_book(%Book{} = book) do
     Repo.delete(book)
