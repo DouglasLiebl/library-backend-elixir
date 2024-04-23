@@ -20,7 +20,7 @@ defmodule RestElixirWeb.Router do
   end
 
   scope "/api/users", RestElixirWeb do
-    pipe_through [:api, :token_filter, :super_user]
+    pipe_through [:api, :header_check, :super_user]
 
     post "/", UserController, :create
     get "/:email", UserController, :show
