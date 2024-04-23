@@ -40,7 +40,7 @@ defmodule RestElixirWeb.Auth.Guardian do
   end
 
   defp create_token(user) do
-    {:ok, token, _claims} = encode_and_sign(user, %{role: "USER"})
+    {:ok, token, _claims} = encode_and_sign(user, %{role: "ADMIN"})
     {:ok, user, token}
   end
 end

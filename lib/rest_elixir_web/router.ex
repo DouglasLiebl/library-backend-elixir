@@ -5,8 +5,11 @@ defmodule RestElixirWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :header_check do
+    plug RestElixirWeb.Auth.TokenFilter
+  end
+
   pipeline :super_user do
-    plug :accepts, ["json"]
     plug RestElixirWeb.Auth.SuperUserFilter
   end
 
@@ -17,7 +20,7 @@ defmodule RestElixirWeb.Router do
   end
 
   scope "/api/users", RestElixirWeb do
-    pipe_through [:api, :super_user]
+    pipe_through [:api, :token_filter, :super_user]
 
     post "/", UserController, :create
     get "/:email", UserController, :show

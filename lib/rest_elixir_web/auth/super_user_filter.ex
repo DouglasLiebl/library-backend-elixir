@@ -1,5 +1,6 @@
 defmodule RestElixirWeb.Auth.SuperUserFilter do
   use RestElixirWeb, :controller
+
   alias RestElixirWeb.Auth.Guardian
 
   def init(_default), do: "SuperUser Filter Init"
@@ -9,25 +10,22 @@ defmodule RestElixirWeb.Auth.SuperUserFilter do
   end
 
   def get_resource_from_token(conn) do
-    case Plug.Conn.get_req_header(conn, "authorization") do
-      [token | _] ->
-        case Guardian.decode_and_verify(token) do
-          {:ok, claims} ->
-            case check_role(claims) do
-              :ok -> conn
-              :error ->
-                conn
-                |> put_status(:unauthorized)
-                |> json(%{error: "Unauthorized"})
-            end
+    [token | _] = get_req_header(conn, "authorization")
 
-          {:error, reason} ->
-            IO.inspect(reason, label: "error")
+    case Guardian.decode_and_verify(token) do
+      {:ok, claims} ->
+        case check_role(claims) do
+          :ok -> conn
+          :error ->
+            conn
+            |> put_status(:unauthorized)
+            |> json(%{error: "Unauthorized: No Permission to access this resource"})
         end
-      [] ->
+
+      {:error, _reason} ->
         conn
         |> put_status(:unauthorized)
-        |> json(%{error: "Unauthorized: No Authorization header"})
+        |> json(%{error: "Unauthorized: Invalid Token"})
     end
   end
 
