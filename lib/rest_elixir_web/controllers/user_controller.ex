@@ -34,14 +34,4 @@ defmodule RestElixirWeb.UserController do
     end
   end
 
-  def get_resource_from_token(conn) do
-    [token | _] = Plug.Conn.get_req_header(conn, "authorization")
-    case Guardian.decode_and_verify(token) do
-      {:ok, claims} ->
-        RestElixirWeb.Auth.Guardian.resource_from_claims(claims)
-
-      {:error, reason} ->
-        IO.inspect(reason, label: "error")
-    end
-  end
 end

@@ -20,7 +20,7 @@ defmodule RestElixirWeb.Router do
   end
 
   scope "/api/users", RestElixirWeb do
-    pipe_through [:api, :header_check, :super_user]
+    pipe_through [:api]
 
     post "/", UserController, :create
     get "/:email", UserController, :show
@@ -30,6 +30,12 @@ defmodule RestElixirWeb.Router do
     pipe_through :api
 
     post "/login", UserController, :login
+  end
+
+  scope "/api/loans", RestElixirWeb do
+    pipe_through :api
+
+    resources "/", LoanController
   end
 
   # Enable LiveDashboard in development

@@ -15,6 +15,8 @@ defmodule RestElixirWeb.BookJSON do
       title: book.title,
       author: book.author,
       isbn: book.isbn,
+      image_url: book.image_url,
+      status: book.status,
       inserted_at: book.inserted_at,
       updated_at: book.updated_at
     }

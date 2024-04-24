@@ -9,6 +9,8 @@ defmodule RestElixir.Models.Entities.User do
     field :email, :string
     field :hash_password, :string
 
+    has_many :loans, RestElixir.Models.Entities.Loan
+
     timestamps(type: :utc_datetime)
   end
 

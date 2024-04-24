@@ -14,7 +14,7 @@ defmodule RestElixir.Models.Repositories.BookRepo do
     |> Repo.insert()
   end
 
-  def get_book!(id), do: Repo.get!(Book, id)
+  def get_book!(id), do: Repo.get!(Book, id) |> Repo.preload(:loans)
 
   def delete_book(%Book{} = book) do
     Repo.delete(book)
@@ -28,5 +28,14 @@ defmodule RestElixir.Models.Repositories.BookRepo do
 
   def change_book(%Book{} = book, attrs \\ %{}) do
     Book.changeset(book, attrs)
+  end
+
+  def is_book_available?(id) do
+    case get_book!(id) do
+      %Book{status: "AVAILABLE"} = book ->
+        IO.inspect(book)
+        {:ok, book}
+      _ -> raise "UNAVAILABLE"
+    end
   end
 end

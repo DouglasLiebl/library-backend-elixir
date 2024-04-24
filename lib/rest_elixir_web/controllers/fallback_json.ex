@@ -27,4 +27,8 @@ defmodule RestElixirWeb.FallbackJSON do
     %{errors: "NotFound"}
   end
 
+  def unavailable(_) do
+    %{errors: "Book is not available"}
+  end
+
 end

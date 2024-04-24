@@ -16,4 +16,11 @@ alias RestElixirWeb.FallbackJSON
     |> put_view(json: FallbackJSON)
     |> render(:not_found)
   end
+
+  def call(conn, {:error, :unavailable}) do
+    conn
+    |> put_status(:forbidden)
+    |> put_view(json: FallbackJSON)
+    |> render(:unavailable)
+  end
 end
