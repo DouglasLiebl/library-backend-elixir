@@ -10,6 +10,7 @@ defmodule RestElixir.Models.Entities.Loan do
     belongs_to :user, User, type: :binary_id
     field :loan_date, :date
     field :return_date, :date
+    field :status, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -23,6 +24,7 @@ defmodule RestElixir.Models.Entities.Loan do
     |> validate_required([:book_id, :user_id])
     |> put_change(:loan_date, Date.utc_today())
     |> put_change(:return_date, Date.add(Date.utc_today(), 5))
+    |> put_change(:status, "PENDING")
     |> foreign_key_constraint(:book_id)
     |> foreign_key_constraint(:user_id)
   end

@@ -18,8 +18,16 @@ defmodule RestElixir.Models.Entities.Book do
     book
     |> cast(attrs, [:title, :author, :isbn, :image_url])
     |> validate_required([:title, :author, :isbn, :image_url])
-    |> put_change(:status, "AVAILABLE")
+    |> put_status(attrs)
     |> unique_constraint([:isbn])
+  end
+
+  defp put_status(changeset, attrs) do
+    if Map.has_key?(attrs, :status) do
+      put_change(changeset, :status, "UNAVAILABLE")
+    else
+      put_change(changeset, :status, "AVAILABLE")
+    end
   end
 
 end

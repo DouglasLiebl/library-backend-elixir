@@ -8,7 +8,11 @@ defmodule RestElixirWeb.LoanController do
 
   def create(conn, %{"loan" => loan_params}) do
     try do
-      with {:ok, %Book{} = book} <- BookRepo.is_book_available?(Map.get(loan_params, "book_id")), {:ok, %User{} = user} <- UserRepo.get_user!(Map.get(loan_params, "user_id")), {:ok, %Loan{} = loan} <- LoanRepo.create_loan(loan_params) do
+      with {:ok, %Book{} = book} <- BookRepo.is_book_available?(Map.get(loan_params, "book_id")),
+      {:ok, %User{} = user} <- UserRepo.get_user!(Map.get(loan_params, "user_id")),
+      {:ok, %Loan{} = loan} <- LoanRepo.create_loan(loan_params) do
+
+        BookRepo.update_book(book, %{status: "UNAVAILABLE"})
 
         conn
         |> put_status(:created)
