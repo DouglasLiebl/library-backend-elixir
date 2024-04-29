@@ -10,6 +10,7 @@ defmodule RestElixir.Models.Entities.User do
     field :hash_password, :string
 
     has_many :loans, RestElixir.Models.Entities.Loan
+    many_to_many :roles, RestElixir.Models.Entities.Role, join_through: "tb_user_roles"
 
     timestamps(type: :utc_datetime)
   end
