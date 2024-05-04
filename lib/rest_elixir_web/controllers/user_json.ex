@@ -12,6 +12,7 @@ defmodule RestElixirWeb.UserJSON do
       last_name: user.last_name,
       email: user.email,
       hash_password: user.hash_password,
+      roles: (for role <- user.roles, do: %{id: role.id, name: role.name}),
       inserted_at: user.inserted_at,
       updated_at: user.updated_at
     }
