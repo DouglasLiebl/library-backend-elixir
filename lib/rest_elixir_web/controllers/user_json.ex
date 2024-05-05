@@ -18,9 +18,8 @@ defmodule RestElixirWeb.UserJSON do
     }
   end
 
-  def logged(%{user: user, token: token}) do
+  def logged(%{token: token}) do
     %{
-      data: data(user),
       access_token: token
     }
   end

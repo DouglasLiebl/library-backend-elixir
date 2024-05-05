@@ -27,10 +27,10 @@ defmodule RestElixirWeb.UserController do
 
   def login(conn, %{"email" => email, "hash_password" => password}) do
     case Guardian.authenticate(email, password) do
-      {:ok, user, token} ->
+      {:ok, _user, token} ->
         conn
         |> put_status(:ok)
-        |> render(:logged, %{user: user, token: token})
+        |> render(:logged, %{token: token})
     end
   end
 

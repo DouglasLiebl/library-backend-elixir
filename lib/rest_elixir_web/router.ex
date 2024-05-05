@@ -10,11 +10,11 @@ defmodule RestElixirWeb.Router do
   end
 
   pipeline :super_user do
-    plug RestElixirWeb.Auth.SuperUserFilter
+    plug RestElixirWeb.Auth.RoleFilter, role: "ROLE_ADMIN"
   end
 
   scope "/api/books", RestElixirWeb do
-    pipe_through :api
+    pipe_through [:api, :header_check, :super_user]
 
     resources "/", BookController
   end

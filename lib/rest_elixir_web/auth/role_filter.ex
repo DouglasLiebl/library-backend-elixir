@@ -1,20 +1,18 @@
-defmodule RestElixirWeb.Auth.SuperUserFilter do
+defmodule RestElixirWeb.Auth.RoleFilter do
   use RestElixirWeb, :controller
 
   alias RestElixirWeb.Auth.Guardian
 
-  def init(_default), do: "SuperUser Filter Init"
-
-  def call(conn, _opts) do
-    get_resource_from_token(conn)
+  def call(conn, opts) do
+    get_resource_from_token(conn, Keyword.get(opts, :role))
   end
 
-  def get_resource_from_token(conn) do
+  def get_resource_from_token(conn, role) do
     [token | _] = get_req_header(conn, "authorization")
 
     case Guardian.decode_and_verify(token) do
       {:ok, claims} ->
-        case check_role(claims) do
+        case check_role(claims, role) do
           :ok -> conn
           :error ->
             conn
@@ -29,10 +27,11 @@ defmodule RestElixirWeb.Auth.SuperUserFilter do
     end
   end
 
-  def check_role(%{"role" => role}) do
-    case role do
-      "ADMIN" -> :ok
-      _ -> :error
+  def check_role(%{"roles" => roles}, required_role) do
+    if Enum.member?(roles, required_role) do
+      :ok
+    else
+      :error
     end
   end
 
