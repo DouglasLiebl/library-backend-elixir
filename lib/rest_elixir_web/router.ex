@@ -1,6 +1,8 @@
 defmodule RestElixirWeb.Router do
   use RestElixirWeb, :router
 
+  # pipelines
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -9,33 +11,50 @@ defmodule RestElixirWeb.Router do
     plug RestElixirWeb.Auth.TokenFilter
   end
 
-  pipeline :super_user do
+  pipeline :user_privileges do
+    plug RestElixirWeb.Auth.RoleFilter, role: "ROLE_USER"
+  end
+
+  pipeline :manager_privileges do
+    plug RestElixirWeb.Auth.RoleFilter, role: "ROLE_MANAGER"
+  end
+
+  pipeline :admin_privileges do
     plug RestElixirWeb.Auth.RoleFilter, role: "ROLE_ADMIN"
   end
 
-  scope "/api/books", RestElixirWeb do
-    pipe_through [:api, :header_check, :super_user]
+  ## ENDPOINTS
 
-    resources "/", BookController
-  end
-
-  scope "/api/users", RestElixirWeb do
-    pipe_through [:api]
-
-    post "/", UserController, :create
-    get "/:email", UserController, :show
-  end
-
+  # Open
   scope "/api", RestElixirWeb do
     pipe_through :api
 
+    post "/register", UserController, :create
     post "/login", UserController, :login
+
+    get "/book", BookController, :index
+    get "/book/:id", BookController, :show
   end
 
-  scope "/api/loans", RestElixirWeb do
-    pipe_through :api
+  # User Privileges
+  scope "/api/users", RestElixirWeb do
+    pipe_through [:api, :header_check, :user_privileges]
 
-    resources "/", LoanController
+    # User Related
+    get "/users/:email", UserController, :show
+
+    # Loan Related
+    post "/loans", LoanController, :create
+  end
+
+  # Manager Privileges
+  scope "/api/managers", RestElixirWeb do
+    pipe_through [:api, :header_check, :manager_privileges]
+
+    # Book Related
+    post "/book", BookController, :create
+    put "/book", BookController, :update
+    delete "/book", BookController, :delete
   end
 
   # Enable LiveDashboard in development
