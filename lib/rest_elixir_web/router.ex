@@ -1,8 +1,8 @@
 defmodule RestElixirWeb.Router do
   use RestElixirWeb, :router
 
-  # pipelines
 
+  ## PIPELINES
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -24,7 +24,6 @@ defmodule RestElixirWeb.Router do
   end
 
   ## ENDPOINTS
-
   # Open
   scope "/api", RestElixirWeb do
     pipe_through :api
@@ -55,6 +54,13 @@ defmodule RestElixirWeb.Router do
     post "/book", BookController, :create
     put "/book", BookController, :update
     delete "/book", BookController, :delete
+  end
+
+  # Admin Privileges
+  scope "/api/admin", RestElixirWeb do
+    pipe_through [:api, :header_check, :admin_privileges]
+
+    # To Do resources impls
   end
 
   # Enable LiveDashboard in development
