@@ -5,6 +5,8 @@ defmodule RestElixirWeb.UserController do
   alias RestElixir.Models.Entities.User
   alias RestElixir.Models.Repositories.UserRepo
 
+  alias RestElixir.Models.Notifications
+
   action_fallback RestElixirWeb.FallbackController
 
   def show(conn, %{"email" => email}) do
@@ -23,6 +25,12 @@ defmodule RestElixirWeb.UserController do
       |> put_resp_header("location", ~p"/api/users/#{user.email}")
       |> render(:show, user: user)
     end
+  end
+
+  def test(conn, _params) do
+    Notifications.sample()
+
+    conn |> put_status(:ok) |> render(:logged, %{token: "xdxdss"})
   end
 
   def login(conn, %{"email" => email, "hash_password" => password}) do

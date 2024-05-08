@@ -43,7 +43,10 @@ defmodule RestElixir.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
       {:argon2_elixir, "~> 4.0"},
-      {:guardian, "~> 2.3.2"}
+      {:guardian, "~> 2.3.2"},
+      {:swoosh, "~> 1.16"},
+      {:hackney, "~> 1.17"},
+      {:mail, "~> 0.3.1"}
     ]
   end
 

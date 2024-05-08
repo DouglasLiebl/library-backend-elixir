@@ -30,6 +30,7 @@ defmodule RestElixirWeb.Router do
 
     post "/register", UserController, :create
     post "/login", UserController, :login
+    get "/test", UserController, :test
 
     get "/book", BookController, :index
     get "/book/:id", BookController, :show
